@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="ASCII"?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+
+    <!-- ========= -->
+    <!-- MATERIALS -->
+    <!-- ========= -->
+
+    <materials>
+
+        <material name="argon" formula="Ar">
+            <D value="0.00166" unit="g/cm3"/>
+            <fraction n="1.0" ref="argon"/>
+        </material>
+
+        <material name="carbon" formula="C">
+            <D value="2.267" unit="g/cm3"/>
+        </material>
+
+        <material name="chromium" formula="Cr">
+            <D value="7.19" unit="g/cm3"/>
+        </material>
+
+        <material name="iron" formula="Fe">
+            <D value="7.87" unit="g/cm3"/>
+        </material>
+
+        <material name="nickel" formula="Ni">
+            <D value="8.90" unit="g/cm3"/>
+        </material>
+
+        <material name="STEEL_STAINLESS_Fe7Cr2Ni" formula="Fe7Cr2Ni">
+            <D value="7.85" unit="g/cm3"/>
+            <fraction n="0.0010" ref="carbon"/>
+            <fraction n="0.1792" ref="chromium"/>
+            <fraction n="0.7298" ref="iron"/>
+            <fraction n="0.0900" ref="nickel"/>
+        </material>
+
+    </materials>   
+
+    <define>
+
+        <constant name="delta" value="0.00001" />
+        <constant name="cos30" value="0.8660254" />
+        <constant name="sin30" value="0.5" />
+
+        <!-- purity monitor -->
+        <constant name="pm_spacer_rmin" value="0.32385" /> <!-- diameter = 0.255 inches-->
+        <constant name="pm_spacer_rmax" value="0.4826" /> <!-- diameter = 0.38 inches-->
+        <constant name="pm_spacer_z" value="0.7874" /> <!-- length = 0.31 inches -->
+        <constant name="pm_spacer_z_cathode" value="1.72974" /> <!-- length = 0.681 inches -->
+        <constant name="pm_ring_rmin" value="2.9845" /> <!-- diameter = 2.35 inches -->
+        <constant name="pm_ring_rmax" value="4" /> <!-- diameter = 3.15 inches -->
+        <constant name="pm_ring_z" value="0.2286" /> <!-- thickness = 0.09 inches -->
+        <constant name="pm_shield_r" value="10" />
+        <constant name="pm_shield_t" value="0.1" />
+        <constant name="pm_shield_hole_r" value="1" />
+        <constant name="pm_shield_z" value="3" />
+        <constant name="pm_shield_nholes" value="2" />
+        <constant name="pm_enclosure_x" value="40" />
+        <constant name="pm_enclosure_y" value="40" />
+        <constant name="pm_enclosure_z" value="40" />
+        <constant name="pm_driftZ" value="0" /> <!-- drift in Z direction for all purity monitor inside pm_enclosure-->
+
+        <constant name="center_of_rod" value="pm_ring_rmin + (pm_ring_rmax/2) - (pm_ring_rmin/2)" />
+        <position name="hole_pos1" x="0" y="center_of_rod" z="0" unit="cm"/>
+        <position name="hole_pos2" x="(-1)*(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm"/>
+        <position name="hole_pos3" x="(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm"/>
+
+        <position name="hole_shield_pos1" x="pm_shield_r" y="0" z="0" unit="cm" />
+        <position name="hole_shield_pos2" x="-pm_shield_r" y="0" z="0" unit="cm" />
+        <rotation name="hole_shield_rot1" x="0" y="90" z="0 * (360/pm_shield_nholes)" unit="deg" />
+
+        <position name="center_pos" x="0" y="0" z="0" unit="cm" />
+
+    </define>
+
+    <solids>
+
+        <box name="World" x="500" y="500" z="500" lunit="cm" />
+        <box name="puritymonitor_enclosure" x="pm_enclosure_x" y="pm_enclosure_y" z="pm_enclosure_z" lunit="cm" /> 
+        
+        <tube name="ring" rmin="pm_ring_rmin" rmax="pm_ring_rmax" z="pm_ring_z" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/> 
+        <tube name="ring_hole" rmin="0" rmax="pm_spacer_rmin" z="pm_ring_z + delta" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <subtraction name="ring_w1hole">
+            <first ref="ring"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos1"/>
+        </subtraction>
+        <subtraction name="ring_w2holes">
+            <first ref="ring_w1hole"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos2"/> 
+        </subtraction>
+        <subtraction name="ring_w3holes">
+            <first ref="ring_w2holes"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos3"/>  
+        </subtraction>
+
+        <tube name="cathode_disk" rmin="0" rmax="pm_ring_rmax" z="pm_ring_z" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/> 
+        <tube name="pm_spacer_cathode" rmin="pm_spacer_rmin" rmax="pm_spacer_rmax" z="pm_spacer_z_cathode" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <tube name="cathode_disk_center_hole" rmin="0" rmax="0.19812" z="pm_ring_z + delta" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <subtraction name="cathode_w1hole">
+            <first ref="cathode_disk"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos1"/>
+        </subtraction>
+        <subtraction name="cathode_w2holes">
+            <first ref="cathode_w1hole"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos2"/> 
+        </subtraction>
+        <subtraction name="cathode_w3holes">
+            <first ref="cathode_w2holes"/>
+            <second ref="ring_hole"/>
+            <positionref ref="hole_pos3"/>  
+        </subtraction>
+        <subtraction name="cathode_disk_part1">
+            <first ref="cathode_w3holes" />
+            <second ref="cathode_disk_center_hole" />
+            <positionref ref="center_pos" />
+        </subtraction>
+
+        <tube name="pm_spacer" rmin="pm_spacer_rmin" rmax="pm_spacer_rmax" z="pm_spacer_z" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <tube name="pm_spacer_enclosure" rmin="0" rmax="pm_ring_rmax" z="pm_spacer_z + delta " startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        
+        <tube name="pm_shield" rmin="pm_shield_r" rmax="pm_shield_r + pm_shield_t" z="pm_shield_z" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <tube name="pm_shield_hole" rmin="0" rmax="pm_shield_hole_r" z="pm_shield_t + 3" startphi="0" deltaphi="360" aunit="deg" lunit="cm" />
+        <subtraction name="shieldw1hole">
+            <first ref="pm_shield" />
+            <second ref="pm_shield_hole" />
+            <positionref ref="hole_shield_pos1" />
+            <rotationref ref="hole_shield_rot1" />
+        </subtraction>
+        <subtraction name="shieldw2holes">
+            <first ref="shieldw1hole" />
+            <second ref="pm_shield_hole" />
+            <positionref ref="hole_shield_pos2" />
+            <rotationref ref="hole_shield_rot1" />
+        </subtraction>
+
+    </solids>
+
+
+    <structure>
+
+        <volume name="volCathodeDisk">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="cathode_disk_part1" />
+        </volume>
+
+        <volume name="volAnodeDisk">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="cathode_w3holes" />
+        </volume>
+
+        <volume name="volAcceleratorDisk">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="ring_w3holes" />
+        </volume>
+
+        <volume name="volShield">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="shieldw2holes" />
+        </volume>
+
+        <volume name="volRingw3holes">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="ring_w3holes" />
+        </volume>
+
+        <volume name="volSpacerCathode">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="pm_spacer_cathode" />
+        </volume>
+        
+        <volume name="volSpacersCathode">
+            <materialref ref="argon" />
+            <solidref ref="pm_spacer_enclosure" />
+            <physvol>
+                <volumeref ref="volSpacerCathode" />
+                <position name="pm_spacer_pos1" x="0" y="center_of_rod" z="0" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacerCathode" />
+                <position name="pm_spacer_pos2" x="(-1)*(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacerCathode" />
+                <position name="pm_spacer_pos3" x="(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm" />
+            </physvol>
+        </volume>
+
+        <volume name="volSpacer">
+            <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni" />
+            <solidref ref="pm_spacer" />
+        </volume>
+        
+        <volume name="volSpacers">
+            <materialref ref="argon" />
+            <solidref ref="pm_spacer_enclosure" />
+            <physvol>
+                <volumeref ref="volSpacer" />
+                <position name="pm_spacer_pos1" x="0" y="center_of_rod" z="0" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacer" />
+                <position name="pm_spacer_pos2" x="(-1)*(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacer" />
+                <position name="pm_spacer_pos3" x="(center_of_rod)*cos30" y="(-1)*(center_of_rod)*sin30" z="0" unit="cm" />
+            </physvol>
+        </volume>
+
+        <volume name="volPurityMonitor">
+            <materialref ref="argon" />
+            <solidref ref="puritymonitor_enclosure" />
+            <physvol>
+                <volumeref ref="volCathodeDisk" />
+                <position name="pm_pos1" x="0" y="0" z="pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacersCathode" /> 
+                <position name="pm_pos2" x="0" y="0" z="(1)*(pm_spacer_z_cathode/2) + (1)*(pm_ring_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" /> <!-- mesh ring -->
+                <position name="pm_pos3" x="0" y="0" z="(2)*(pm_ring_z/2) + (pm_spacer_z_cathode) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos3" x="0" y="0" z="(3)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (1)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volAcceleratorDisk" /> <!-- accelerator ring -->
+                <position name="pm_pos4" x="0" y="0" z="(4)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (2)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos5" x="0" y="0" z="(5)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (3)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos6" x="0" y="0" z="(6)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (4)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos7" x="0" y="0" z="(7)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (5)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos8" x="0" y="0" z="(8)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (6)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos9" x="0" y="0" z="(9)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (7)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos10" x="0" y="0" z="(10)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (8)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos11" x="0" y="0" z="(11)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (9)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos12" x="0" y="0" z="(12)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (10)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos13" x="0" y="0" z="(13)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (11)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos14" x="0" y="0" z="(14)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (12)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos15" x="0" y="0" z="(15)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (13)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos16" x="0" y="0" z="(16)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (14)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos17" x="0" y="0" z="(17)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (15)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos18" x="0" y="0" z="(18)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (16)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos19" x="0" y="0" z="(19)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (17)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos20" x="0" y="0" z="(20)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (18)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos21" x="0" y="0" z="(21)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (19)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos22" x="0" y="0" z="(22)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (20)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos23" x="0" y="0" z="(23)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (21)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos24" x="0" y="0" z="(24)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (22)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos25" x="0" y="0" z="(25)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (23)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos26" x="0" y="0" z="(26)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (24)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos27" x="0" y="0" z="(27)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (25)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos28" x="0" y="0" z="(28)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (26)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos29" x="0" y="0" z="(29)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (27)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" />
+                <position name="pm_pos30" x="0" y="0" z="(30)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (28)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos31" x="0" y="0" z="(31)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (29)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volAcceleratorDisk" /> <!-- this is the accelerator ring -->
+                <position name="pm_pos32" x="0" y="0" z="(32)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (30)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos33" x="0" y="0" z="(33)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (31)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volRingw3holes" /> <!-- this is the grid ring -->
+                <position name="pm_pos34" x="0" y="0" z="(34)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (32)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volSpacers" />
+                <position name="pm_pos35" x="0" y="0" z="(35)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (33)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+            <physvol>
+                <volumeref ref="volAnodeDisk" /> <!-- this is the anode ring, which is the same as the cathode ring but without the central hole -->
+                <position name="pm_pos36" x="0" y="0" z="(36)*(pm_ring_z/2) + (pm_spacer_z_cathode) + (34)*(pm_spacer_z/2) + pm_driftZ" unit="cm" />
+            </physvol>
+        </volume>
+
+        <volume name="volWorld">
+            <materialref ref="argon"/>
+            <solidref ref="World"/>
+            <physvol>
+                <volumeref ref="volPurityMonitor" />
+                <position name="center" x="0" y="0" z="0" unit="cm" />
+            </physvol>
+        </volume>
+    </structure>
+
+    <setup name="Default" version="1.0">
+        <world ref="volWorld"/>
+    </setup>
+
+</gdml>
