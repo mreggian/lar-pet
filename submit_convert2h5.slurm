@@ -1,3 +1,7 @@
+# Author: Lauren Sdun
+# Last modified: April 7, 2026
+# Description: # submit a batch job that runs the ROOT to HDF5 conversion inside the ARCUBE Shifter container for a single ROOT file. The input and output files can be changed in lines 34-35.
+
 #!/bin/bash
 
 #SBATCH --account=dune
