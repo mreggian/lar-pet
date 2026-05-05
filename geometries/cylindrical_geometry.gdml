@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gdml>
+
+<!-- ========================================================= -->
+<!-- GDML Geometry: Liquid Argon Cylinder with Photosensitive End -->
+<!-- ========================================================= -->
+
+    <!-- ========= -->
+    <!-- POSITIONS -->
+    <!-- to be referenced in place where positions are expected. -->
+    <!-- ========= -->
+
+    <define>
+        <position name="center" x="0" y="0" z="0" unit="mm"/>
+    </define>
+
+    <!-- ========= -->
+    <!-- MATERIALS -->
+    <!-- contains definitions of all the materials used in the given geometry. -->
+    <!-- ========= -->
+
+    <materials>
+
+    <element name="Nitrogen" formula="N" Z="7">
+        <atom value="14.01"/>
+    </element>
+
+    <element name="Oxygen" formula="O" Z="8">
+        <atom value="16.00"/>
+    </element>
+
+    <!-- can be a fractional mixture of previously defined elements. -->
+    <material name="Air">
+        <D value="0.00129" unit="g/cm3"/>
+        <fraction n="0.7" ref="Nitrogen"/>
+        <fraction n="0.3" ref="Oxygen"/>
+    </material>
+
+    <!-- Liquid argon -->
+    <material name="LAr" formula="Ar" Z="18">
+      <D value="1.39" unit="g/cm3"/>
+      <atom value="39.95"/>
+    </material>
+
+    </materials>
+
+    <!-- ====== -->
+    <!-- SOLIDS -->
+    <!-- contains definitions of all the materials used in the given geometry. -->
+    <!-- ====== -->
+
+    <solids>
+
+    <!-- World box -->
+    <box name="worldBox" x="200" y="200" z="200" lunit="mm"/>
+
+    <!-- Liquid argon cylinder -->
+    <tube name="argonCylinder"
+        rmin="0"
+        rmax="20"
+        z="50"
+        startphi="0"
+        deltaphi="360"
+        aunit="deg"
+        lunit="mm"/>
+
+    <!-- Thin photosensitive disk on one end -->
+    <tube name="photoDisk"
+        rmin="0"
+        rmax="20"
+        z="1"
+        startphi="0"
+        deltaphi="360"
+        aunit="deg"
+        lunit="mm"/>
+    </solids>
+
+    <!-- ========= -->
+    <!-- STRUCTURE -->
+    <!-- actual implementation of the geometry tree.-->
+    <!-- ========= -->
+
+    <structure>
+
+    <!-- Logical volumes: -->
+
+    <!-- Liquid argon volume -->
+    <volume name="ArgonCylinderVolume">
+      <materialref ref="LAr"/>
+      <solidref ref="argonCylinder"/>
+    </volume>
+
+    <!-- Photosensitive end volume -->
+    <volume name="PhotoSensitiveEnd">
+      <materialref ref="Air"/>
+      <solidref ref="photoDisk"/>
+      <auxiliary auxtype="SensDet" auxvalue="photoCathodeSD"/>
+    </volume>
+
+    <!-- World volume -->
+    <volume name="World">
+      <materialref ref="Air"/>
+      <solidref ref="worldBox"/>
+
+    <!-- Physical volumes: -->
+
+      <!-- Place liquid argon cylinder inside world -->
+      <physvol>
+        <volumeref ref="ArgonCylinderVolume"/>
+        <position name="argon_pos" x="0" y="0" z="0" unit="mm"/>
+      </physvol>
+
+      <!-- Place photosensitive disk on +z end of cylinder -->
+      <physvol>
+        <volumeref ref="PhotoSensitiveEnd"/>
+        <position name="photo_pos" x="0" y="0" z="25.5" unit="mm"/>
+      </physvol>
+
+    </volume>
+
+  </structure>
+
+    <!-- specify the top volume of the geometry tree -->
+    <setup name="Default" version="1.0">
+        <world ref="World"/>
+    </setup>
+
+</gdml>
