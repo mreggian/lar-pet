@@ -6,7 +6,7 @@ void view_cylgeo_gdml() {
     gSystem->Load("libGeom");
     gSystem->Load("libGdml");
 
-    TGeoManager *geom = TGeoManager::Import("test.gdml");
+    TGeoManager *geom = TGeoManager::Import("cylindrical_geometry.gdml");
 
     TGeoVolume *world = geom->GetVolume("World");
     TGeoVolume *argon = geom->GetVolume("ArgonCylinderVolume");
