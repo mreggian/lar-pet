@@ -5,19 +5,23 @@
 <!-- GDML Geometry: Liquid Argon Cylinder with Photosensitive End -->
 <!-- ========================================================= -->
 
-    <!-- ========= -->
+<!--
+    Description:
+    This GDML file defines a simple detector geometry consisting of:
+        - A world volume (Air) containing all geometry
+        - A cylindrical volume filled with liquid argon (LAr)
+        - A thin disk placed at one end of the cylinder marked as a photosensitive detector
+-->
+
     <!-- POSITIONS -->
     <!-- to be referenced in place where positions are expected. -->
-    <!-- ========= -->
 
     <define>
         <position name="center" x="0" y="0" z="0" unit="mm"/>
     </define>
 
-    <!-- ========= -->
     <!-- MATERIALS -->
     <!-- contains definitions of all the materials used in the given geometry. -->
-    <!-- ========= -->
 
     <materials>
 
@@ -44,10 +48,8 @@
 
     </materials>
 
-    <!-- ====== -->
     <!-- SOLIDS -->
     <!-- contains definitions of all the materials used in the given geometry. -->
-    <!-- ====== -->
 
     <solids>
 
