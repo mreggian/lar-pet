@@ -8,9 +8,18 @@
 <!--
     Description:
     This GDML file defines a simple detector geometry consisting of:
-        - A world volume (Air) containing all geometry
-        - A cylindrical volume filled with liquid argon (LAr)
-        - A thin disk placed at one end of the cylinder marked as a photosensitive detector
+      - A world volume (Air) containing all geometry
+      - A cylindrical volume filled with liquid argon (LAr)
+      - A thin disk placed at one end of the cylinder marked as a photosensitive detector
+
+    Geometry Details:
+      - Cylinder radius: 20 mm
+      - Cylinder length: 50 mm (centered at z = 0)
+      - Photosensitive disk thickness: 1 mm
+      - Disk positioned at +z end of cylinder (z = +25.5 mm)
+
+    Author: Lauren Sdun
+    Last Modified: May 05, 2026
 -->
 
     <!-- POSITIONS -->
