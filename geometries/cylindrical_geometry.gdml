@@ -103,9 +103,9 @@
 
     <!-- Photosensitive end volume -->
     <volume name="PhotoSensitiveEnd">
-      <materialref ref="Air"/>
+      <materialref ref="LAr"/>
       <solidref ref="photoDisk"/>
-      <auxiliary auxtype="SensDet" auxvalue="photoCathodeSD"/>
+      <auxiliary auxtype="SensDet" auxvalue="volLArActive"/>
     </volume>
 
     <!-- World volume -->
