@@ -8,15 +8,16 @@
 <!--
     Description:
     This GDML file defines a simple detector geometry consisting of:
-      - A world volume (Air) containing all geometry
-      - A cylindrical volume filled with liquid argon (LAr)
-      - A thin disk placed at one end of the cylinder marked as a photosensitive detector
+      - A world volume filled with liquid argon (LAr)
+      - A cylindrical active volume centered within the world
+      - The cylindrical volume is marked as a sensitive detector using the "SegmentDetector" 
+        auxiliary tag for charge/energy deposition studies
 
     Geometry Details:
-      - Cylinder radius: 20 mm
-      - Cylinder length: 50 mm (centered at z = 0)
-      - Photosensitive disk thickness: 1 mm
-      - Disk positioned at +z end of cylinder (z = +25.5 mm)
+      - World volume dimensions: 200 mm × 200 mm × 200 mm
+      - Cylindrical active volume radius: 100 mm
+      - Cylindrical active volume length: 200 mm
+      - Cylinder centered at (0, 0, 0)
 
     Author: Lauren Sdun
     Last Modified: May 05, 2026
@@ -63,27 +64,27 @@
     <solids>
 
     <!-- World box -->
-    <box name="worldBox" x="200" y="200" z="200" lunit="mm"/>
+    <box name="LArActive" x="200" y="200" z="200" lunit="mm"/>
 
     <!-- Liquid argon cylinder -->
     <tube name="argonCylinder"
         rmin="0"
-        rmax="20"
-        z="50"
+        rmax="100"
+        z="200"
         startphi="0"
         deltaphi="360"
         aunit="deg"
         lunit="mm"/>
 
     <!-- Thin photosensitive disk on one end -->
-    <tube name="photoDisk"
+    <!-- <tube name="photoDisk"
         rmin="0"
         rmax="20"
         z="1"
         startphi="0"
         deltaphi="360"
         aunit="deg"
-        lunit="mm"/>
+        lunit="mm"/> -->
     </solids>
 
     <!-- ========= -->
@@ -96,22 +97,25 @@
     <!-- Logical volumes: -->
 
     <!-- Liquid argon volume -->
-    <volume name="ArgonCylinderVolume">
-      <materialref ref="LAr"/>
-      <solidref ref="argonCylinder"/>
-    </volume>
+  <volume name="ArgonCylinderVolume">
+    <materialref ref="LAr"/>
+    <solidref ref="argonCylinder"/>
+    <auxiliary auxtype="SegmentDetector" auxvalue="ArgonCylinderVolume"/>
+  </volume>
 
     <!-- Photosensitive end volume -->
+    <!--
     <volume name="PhotoSensitiveEnd">
       <materialref ref="LAr"/>
       <solidref ref="photoDisk"/>
       <auxiliary auxtype="SensDet" auxvalue="volLArActive"/>
     </volume>
+    -->
 
     <!-- World volume -->
     <volume name="World">
-      <materialref ref="Air"/>
-      <solidref ref="worldBox"/>
+      <materialref ref="LAr"/>
+      <solidref ref="LArActive"/>
 
     <!-- Physical volumes: -->
 
@@ -122,10 +126,10 @@
       </physvol>
 
       <!-- Place photosensitive disk on +z end of cylinder -->
-      <physvol>
+      <!-- <physvol>
         <volumeref ref="PhotoSensitiveEnd"/>
         <position name="photo_pos" x="0" y="0" z="25.5" unit="mm"/>
-      </physvol>
+      </physvol> -->
 
     </volume>
 
