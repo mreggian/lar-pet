@@ -64,7 +64,7 @@
     <solids>
 
     <!-- World box -->
-    <box name="LArActive" x="200" y="200" z="200" lunit="mm"/>
+    <box name="World" x="200" y="200" z="200" lunit="mm"/>
 
     <!-- Liquid argon cylinder -->
     <tube name="argonCylinder"
@@ -97,40 +97,24 @@
     <!-- Logical volumes: -->
 
     <!-- Liquid argon volume -->
-    <volume name="ArgonCylinderVolume">
+    <volume name="volLArActive">
         <materialref ref="LAr"/>
         <solidref ref="argonCylinder"/>
-        <!--auxiliary auxtype="SegmentDetector" auxvalue="ArgonCylinderVolume"/-->
         <auxiliary auxtype="SensDet" auxvalue="volLArActive"/>
     </volume>
 
-    <!-- Photosensitive end volume -->
-    <!--
-    <volume name="PhotoSensitiveEnd">
-      <materialref ref="LAr"/>
-      <solidref ref="photoDisk"/>
-      <auxiliary auxtype="SensDet" auxvalue="volLArActive"/>
-    </volume>
-    -->
-
     <!-- World volume -->
-    <volume name="World">
+    <volume name="volWorld">
       <materialref ref="LAr"/>
-      <solidref ref="LArActive"/>
+      <solidref ref="World"/>
 
     <!-- Physical volumes: -->
 
       <!-- Place liquid argon cylinder inside world -->
       <physvol>
-        <volumeref ref="ArgonCylinderVolume"/>
+        <volumeref ref="volLArActive"/>
         <position name="argon_pos" x="0" y="0" z="0" unit="mm"/>
       </physvol>
-
-      <!-- Place photosensitive disk on +z end of cylinder -->
-      <!-- <physvol>
-        <volumeref ref="PhotoSensitiveEnd"/>
-        <position name="photo_pos" x="0" y="0" z="25.5" unit="mm"/>
-      </physvol> -->
 
     </volume>
 
@@ -138,7 +122,7 @@
 
     <!-- specify the top volume of the geometry tree -->
     <setup name="Default" version="1.0">
-        <world ref="World"/>
+        <world ref="volWorld"/>
     </setup>
 
 </gdml>
