@@ -97,11 +97,12 @@
     <!-- Logical volumes: -->
 
     <!-- Liquid argon volume -->
-  <volume name="ArgonCylinderVolume">
-    <materialref ref="LAr"/>
-    <solidref ref="argonCylinder"/>
-    <auxiliary auxtype="SegmentDetector" auxvalue="ArgonCylinderVolume"/>
-  </volume>
+    <volume name="ArgonCylinderVolume">
+        <materialref ref="LAr"/>
+        <solidref ref="argonCylinder"/>
+        <!--auxiliary auxtype="SegmentDetector" auxvalue="ArgonCylinderVolume"/-->
+        <auxiliary auxtype="SensDet" auxvalue="volLArActive"/>
+    </volume>
 
     <!-- Photosensitive end volume -->
     <!--
